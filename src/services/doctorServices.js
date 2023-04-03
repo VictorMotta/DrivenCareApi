@@ -5,14 +5,20 @@ async function insertSpecialty(specialty, user) {
   let specialtyId;
 
   const {
-    rowCount,
+    rowCount: rowCountFindSpecialty,
     rows: [specialtyRow],
   } = await doctorRepositories.findSpecialtyByName(specialty);
 
-  if (rowCount) specialtyId = specialtyRow.id;
+  if (rowCountFindSpecialty) specialtyId = specialtyRow.id;
 
-  if (!rowCount) specialtyId = await doctorRepositories.insertNewSpecialty(specialty);
+  if (!rowCountFindSpecialty) {
+    specialtyId = await doctorRepositories.insertNewSpecialty(specialty);
+  }
+  console.log(specialtyId);
 
+  if (specialtyId.rows) specialtyId = specialtyId.rows[0].id;
+
+  console.log(specialtyId);
   const {
     rows: [qtySpecialty],
   } = await doctorRepositories.checkAmountSpecialtyDoctor(user.id);
@@ -24,8 +30,6 @@ async function insertSpecialty(specialty, user) {
   });
   if (doctorHasSpecialty) throw errors.equalSpecialtiesError();
 
-  console.log(user.id);
-  console.log(specialtyId);
   await doctorRepositories.insertSpecialtyFromDoctor({ userId: user.id, specialtyId });
 }
 

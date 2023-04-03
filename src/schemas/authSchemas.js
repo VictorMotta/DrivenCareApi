@@ -8,6 +8,10 @@ export const signUpUserSchema = Joi.object({
     .pattern(/^\d+$/)
     .length(11)
     .message('O Telefone deve conter exatamente 11 números contando com o 21 na frente.'),
+  address: Joi.string().required(),
+  city: Joi.string().required(),
+  state: Joi.string().required(),
+  house_number: Joi.string().required(),
   is_doctor: Joi.boolean().required(),
   cpf: Joi.string()
     .pattern(/^\d+$/)

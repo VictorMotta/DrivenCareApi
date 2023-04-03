@@ -27,15 +27,27 @@ async function findByCrm({ crm }) {
   );
 }
 
-async function signUp({ name, email, password, telephone, is_doctor, cpf, crm }) {
+async function signUp({
+  name,
+  email,
+  password,
+  telephone,
+  address,
+  city,
+  state,
+  house_number,
+  is_doctor,
+  cpf,
+  crm,
+}) {
   return await connectionDb.query(
     `
     INSERT INTO users 
-    (name, email,password,telephone, is_doctor, cpf,crm)
+    (name, email,password,telephone, address,city, state, house_number,is_doctor, cpf,crm)
     VALUES
-    ($1,$2,$3,$4,$5,$6,$7)
+    ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10, $11)
   `,
-    [name, email, password, telephone, is_doctor, cpf, crm]
+    [name, email, password, telephone, address, city, state, house_number, is_doctor, cpf, crm]
   );
 }
 

@@ -4,7 +4,19 @@ import errors from '../errors/index.js';
 import jwt from 'jsonwebtoken';
 import 'dotenv/config';
 
-async function signUp({ name, email, password, telephone, is_doctor, cpf, crm }) {
+async function signUp({
+  name,
+  email,
+  password,
+  telephone,
+  address,
+  city,
+  state,
+  house_number,
+  is_doctor,
+  cpf,
+  crm,
+}) {
   const { rowCount: rowCountEmail } = await authRepositories.findByEmail({ email });
   if (rowCountEmail) throw errors.duplicatedEmailError();
 
@@ -18,6 +30,8 @@ async function signUp({ name, email, password, telephone, is_doctor, cpf, crm })
     if (rowCountCrm) throw errors.duplicatedCrmError();
   }
 
+  if (!is_doctor && crm) throw errors.conflictError('Patient does not have CRM!');
+
   const hashPassword = await bcrypt.hash(password, 10);
 
   return await authRepositories.signUp({
@@ -25,6 +39,10 @@ async function signUp({ name, email, password, telephone, is_doctor, cpf, crm })
     email,
     password: hashPassword,
     telephone,
+    address,
+    city,
+    state,
+    house_number,
     is_doctor,
     cpf,
     crm: !crm ? null : crm,
