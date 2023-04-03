@@ -90,7 +90,9 @@ async function getAllSchedulesPatient({ patientId }) {
       sch.id AS "schedulingId",
       "at".time AS "schedulingTime",
       u.name AS "doctorName",
-      s.name AS "specialtyName"
+      s.name AS "specialtyName",
+      sch.doctors_confirmation AS "confirmation",
+      sch.finished 
     FROM scheduling sch
     LEFT JOIN available_times "at"
      ON "at".id = sch.available_times_id
@@ -101,6 +103,31 @@ async function getAllSchedulesPatient({ patientId }) {
     LEFT JOIN specialties s
       ON s.id = ds.specialty_id
     WHERE sch.patient_id = $1;  
+  `,
+    [patientId]
+  );
+}
+
+async function getAllSchedulesFinishedPatient({ patientId }) {
+  return await connectionDb.query(
+    `
+    SELECT 
+      sch.id AS "schedulingId",
+      atm.time AS "schedulingTime",
+      u.name AS "patientName",
+      s.name AS "specialtyName",
+      sch.doctors_confirmation AS "confirmation",
+      sch.finished 
+    FROM scheduling sch
+    JOIN users u
+      ON u.id = sch.patient_id
+    JOIN available_times atm
+      ON atm.id = sch.available_times_id
+    JOIN doctors_specialty ds
+      ON ds.id = atm.specialty_id
+    JOIN specialties s
+      ON s.id = ds.specialty_id
+    WHERE sch.patient_id = $1 AND sch.finished = 'true';
   `,
     [patientId]
   );
@@ -131,5 +158,6 @@ export default {
   getAllDoctorSchedules,
   getHoraryById,
   getAllSchedulesPatient,
+  getAllSchedulesFinishedPatient,
   scheduleNewHorary,
 };

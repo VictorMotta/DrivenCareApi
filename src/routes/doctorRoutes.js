@@ -9,6 +9,12 @@ const doctorRouter = Router();
 
 doctorRouter.get('/schedules', authenticationValidation, doctorControllers.getAllSchedulesDoctor);
 
+doctorRouter.get(
+  '/schedules/finish',
+  authenticationValidation,
+  doctorControllers.getAllSchedulesFinishedDoctor
+);
+
 doctorRouter.post(
   '/specialty',
   validateSchema(insertSpecialtySchema),
@@ -21,6 +27,22 @@ doctorRouter.post(
   validateSchema(insertHorarySchema),
   authenticationValidation,
   doctorControllers.insertHorary
+);
+doctorRouter.put(
+  '/schedules/confirm/:scheduleId',
+  authenticationValidation,
+  doctorControllers.confirmSchedules
+);
+doctorRouter.put(
+  '/schedules/cancel/:scheduleId',
+  authenticationValidation,
+  doctorControllers.cancelSchedules
+);
+
+doctorRouter.put(
+  '/schedules/finish/:scheduleId',
+  authenticationValidation,
+  doctorControllers.finishedSchedules
 );
 
 export default doctorRouter;

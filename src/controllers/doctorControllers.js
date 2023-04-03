@@ -10,6 +10,16 @@ async function getAllSchedulesDoctor(req, res, next) {
   }
 }
 
+async function getAllSchedulesFinishedDoctor(req, res, next) {
+  const user = res.locals.user;
+  try {
+    const schedulesFinishedDoctor = await doctorServices.getAllSchedulesFinishedDoctor({ user });
+    return res.send(schedulesFinishedDoctor);
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function insertSpecialty(req, res, next) {
   const { specialty } = req.body;
   const user = res.locals.user;
@@ -33,9 +43,48 @@ async function insertHorary(req, res, next) {
     next(err);
   }
 }
+async function confirmSchedules(req, res, next) {
+  const { scheduleId } = req.params;
+  const user = res.locals.user;
+
+  try {
+    await doctorServices.confirmSchedules({ scheduleId, user });
+    return res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function cancelSchedules(req, res, next) {
+  const { scheduleId } = req.params;
+  const user = res.locals.user;
+
+  try {
+    await doctorServices.cancelSchedules({ scheduleId, user });
+    return res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function finishedSchedules(req, res, next) {
+  const { scheduleId } = req.params;
+  const user = res.locals.user;
+
+  try {
+    await doctorServices.finishedSchedules({ scheduleId, user });
+    return res.sendStatus(200);
+  } catch (err) {
+    next(err);
+  }
+}
 
 export default {
   getAllSchedulesDoctor,
+  getAllSchedulesFinishedDoctor,
   insertSpecialty,
   insertHorary,
+  confirmSchedules,
+  cancelSchedules,
+  finishedSchedules,
 };

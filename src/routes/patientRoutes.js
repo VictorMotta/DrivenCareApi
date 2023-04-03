@@ -18,6 +18,12 @@ patientRouter.get(
   patientControllers.getAllSchedulesPatient
 );
 
+patientRouter.get(
+  '/schedules/finish',
+  authenticationValidation,
+  patientControllers.getAllSchedulesFinishedPatient
+);
+
 patientRouter.post(
   '/horary/schedule/:timeId',
   authenticationValidation,

@@ -7,7 +7,9 @@ async function getAllSchedulesDoctor({ doctorId }) {
       sch.id AS "schedulingId",
       atm.time AS "schedulingTime",
       u.name AS "patientName",
-      s.name AS "specialtyName"
+      s.name AS "specialtyName",
+      sch.doctors_confirmation AS "confirmation",
+      sch.finished 
     FROM scheduling sch
     JOIN users u
       ON u.id = sch.patient_id
@@ -18,6 +20,31 @@ async function getAllSchedulesDoctor({ doctorId }) {
     JOIN specialties s
       ON s.id = ds.specialty_id
     WHERE atm.doctor_id = $1;
+  `,
+    [doctorId]
+  );
+}
+
+async function getAllSchedulesFinishedDoctor({ doctorId }) {
+  return await connectionDb.query(
+    `
+    SELECT 
+      sch.id AS "schedulingId",
+      atm.time AS "schedulingTime",
+      u.name AS "patientName",
+      s.name AS "specialtyName",
+      sch.doctors_confirmation AS "confirmation",
+      sch.finished 
+    FROM scheduling sch
+    JOIN users u
+      ON u.id = sch.patient_id
+    JOIN available_times atm
+      ON atm.id = sch.available_times_id
+    JOIN doctors_specialty ds
+      ON ds.id = atm.specialty_id
+    JOIN specialties s
+      ON s.id = ds.specialty_id
+    WHERE atm.doctor_id = $1 AND sch.finished = 'true';
   `,
     [doctorId]
   );
@@ -106,7 +133,7 @@ async function insertHorary({ time, userId, specialtyDoctorId }) {
 }
 
 async function getSpecialtyDoctorById({ specialtyDoctorId }) {
-  return connectionDb.query(
+  return await connectionDb.query(
     `
     SELECT * FROM doctors_specialty WHERE id = $1
   `,
@@ -114,8 +141,48 @@ async function getSpecialtyDoctorById({ specialtyDoctorId }) {
   );
 }
 
+async function checkScheduleIsFromDoc({ scheduleId, doctorId }) {
+  return await connectionDb.query(
+    `
+    SELECT * FROM scheduling sch
+    JOIN available_times atm
+      ON atm.id = sch.available_times_id
+    WHERE sch.id = $1 AND atm.doctor_id = $2; 
+  `,
+    [scheduleId, doctorId]
+  );
+}
+
+async function confirmSchedules({ scheduleId }) {
+  return await connectionDb.query(
+    `
+    UPDATE scheduling SET doctors_confirmation = 'true' WHERE id = $1;
+  `,
+    [scheduleId]
+  );
+}
+
+async function cancelSchedules({ scheduleId }) {
+  return await connectionDb.query(
+    `
+    UPDATE scheduling SET doctors_confirmation = 'false' WHERE id = $1;
+  `,
+    [scheduleId]
+  );
+}
+
+async function finishedSchedules({ scheduleId }) {
+  return await connectionDb.query(
+    `
+    UPDATE scheduling SET finished = 'true' WHERE id = $1;
+  `,
+    [scheduleId]
+  );
+}
+
 export default {
   getAllSchedulesDoctor,
+  getAllSchedulesFinishedDoctor,
   findSpecialtyByName,
   insertNewSpecialty,
   checkAmountSpecialtyDoctor,
@@ -124,4 +191,8 @@ export default {
   checkHoraryExist,
   insertHorary,
   getSpecialtyDoctorById,
+  checkScheduleIsFromDoc,
+  confirmSchedules,
+  cancelSchedules,
+  finishedSchedules,
 };

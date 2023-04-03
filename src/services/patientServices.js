@@ -48,6 +48,17 @@ async function getAllSchedulesPatient({ user }) {
   return schedules;
 }
 
+async function getAllSchedulesFinishedPatient({ user }) {
+  if (user.is_doctor)
+    throw errors.unauthorizedMessageError('Only the user can see their completed appointments.');
+
+  const { rowCount: rowCountSchedulesPatient, rows: schedulesPatient } =
+    await patientRepositories.getAllSchedulesFinishedPatient({ patientId: user.id });
+  if (!rowCountSchedulesPatient) throw errors.notFoundMessageError('No history found.');
+
+  return schedulesPatient;
+}
+
 async function scheduleNewHorary({ timeId, user }) {
   const {
     rowCount: rowCountVerifyHoraryExist,
@@ -75,5 +86,6 @@ export default {
   getAllDoctors,
   getAllDoctorSchedules,
   getAllSchedulesPatient,
+  getAllSchedulesFinishedPatient,
   scheduleNewHorary,
 };

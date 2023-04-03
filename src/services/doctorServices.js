@@ -12,6 +12,17 @@ async function getAllSchedulesDoctor({ user }) {
   return schedulesDoctor;
 }
 
+async function getAllSchedulesFinishedDoctor({ user }) {
+  if (!user.is_doctor)
+    throw errors.unauthorizedMessageError('Only doctors can see all scheduled finished.');
+
+  const { rowCount: rowCountSchedulesDoctor, rows: schedulesDoctor } =
+    await doctorRepositories.getAllSchedulesFinishedDoctor({ doctorId: user.id });
+  if (!rowCountSchedulesDoctor) throw errors.notFoundMessageError('No consultation finished.');
+
+  return schedulesDoctor;
+}
+
 async function insertSpecialty(specialty, user) {
   let specialtyId;
 
@@ -77,8 +88,71 @@ async function insertHorary({ time, specialtyDoctorId, user }) {
   await doctorRepositories.insertHorary({ time, userId: user.id, specialtyDoctorId });
 }
 
+async function confirmSchedules({ scheduleId, user }) {
+  if (!user.is_doctor)
+    throw errors.unauthorizedMessageError('Only doctors can confirm an appointment.');
+
+  const {
+    rowCount: rowCountVerifyIsDoc,
+    rows: [scheduleFromDoc],
+  } = await doctorRepositories.checkScheduleIsFromDoc({
+    scheduleId,
+    doctorId: user.id,
+  });
+  if (!rowCountVerifyIsDoc) throw errors.unauthorizedError();
+
+  if (scheduleFromDoc.doctors_confirmation === true)
+    throw errors.unauthorizedMessageError(
+      'You cannot confirm something that is already confirmed.'
+    );
+
+  await doctorRepositories.confirmSchedules({ scheduleId });
+}
+
+async function cancelSchedules({ scheduleId, user }) {
+  if (!user.is_doctor)
+    throw errors.unauthorizedMessageError('Only doctors can cancel an appointment.');
+
+  const {
+    rowCount: rowCountVerifyIsDoc,
+    rows: [scheduleFromDoc],
+  } = await doctorRepositories.checkScheduleIsFromDoc({
+    scheduleId,
+    doctorId: user.id,
+  });
+  if (!rowCountVerifyIsDoc) throw errors.unauthorizedError();
+
+  if (scheduleFromDoc.doctors_confirmation === false)
+    throw errors.unauthorizedMessageError('You cannot cancel something that is already cancelled.');
+
+  await doctorRepositories.cancelSchedules({ scheduleId });
+}
+
+async function finishedSchedules({ scheduleId, user }) {
+  if (!user.is_doctor)
+    throw errors.unauthorizedMessageError('Only doctors can finish an appointment.');
+
+  const {
+    rowCount: rowCountVerifyIsDoc,
+    rows: [scheduleFromDoc],
+  } = await doctorRepositories.checkScheduleIsFromDoc({
+    scheduleId,
+    doctorId: user.id,
+  });
+  if (!rowCountVerifyIsDoc) throw errors.unauthorizedError();
+
+  if (scheduleFromDoc.finished === true)
+    throw errors.unauthorizedMessageError('You cannot finish something that is already finished.');
+
+  await doctorRepositories.finishedSchedules({ scheduleId });
+}
+
 export default {
   getAllSchedulesDoctor,
+  getAllSchedulesFinishedDoctor,
   insertSpecialty,
   insertHorary,
+  confirmSchedules,
+  cancelSchedules,
+  finishedSchedules,
 };

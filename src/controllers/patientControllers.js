@@ -36,6 +36,16 @@ async function getAllSchedulesPatient(req, res, next) {
   }
 }
 
+async function getAllSchedulesFinishedPatient(req, res, next) {
+  const user = res.locals.user;
+  try {
+    const schedulesFinishedPatient = await patientServices.getAllSchedulesFinishedPatient({ user });
+    return res.send(schedulesFinishedPatient);
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function scheduleNewHorary(req, res, next) {
   const { timeId } = req.params;
   const user = res.locals.user;
@@ -51,5 +61,6 @@ export default {
   getAllDoctors,
   getAllDoctorSchedules,
   getAllSchedulesPatient,
+  getAllSchedulesFinishedPatient,
   scheduleNewHorary,
 };
