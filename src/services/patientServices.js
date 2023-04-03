@@ -34,7 +34,23 @@ async function getAllDoctorSchedules({ doctorId, user }) {
   return schedules;
 }
 
+async function scheduleNewHorary({ timeId, user }) {
+  const {
+    rowCount: rowCountVerifyHoraryExist,
+    rows: [timeDoctor],
+  } = await patientRepositories.getHoraryById({
+    timeId,
+  });
+  if (!rowCountVerifyHoraryExist) throw errors.notFoundError();
+
+  if (timeDoctor.doctor_id === user.id)
+    throw errors.conflictError('You cannot schedule an appointment with yourself.');
+
+  await patientRepositories.scheduleNewHorary({ timeId, userId: user.id });
+}
+
 export default {
   getAllDoctors,
   getAllDoctorSchedules,
+  scheduleNewHorary,
 };

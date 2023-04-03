@@ -33,7 +33,7 @@ async function insertSpecialty(specialty, user) {
   await doctorRepositories.insertSpecialtyFromDoctor({ userId: user.id, specialtyId });
 }
 
-async function insertHorary({ time, user }) {
+async function insertHorary({ time, specialtyDoctorId, user }) {
   const dateTime = new Date(time);
   const nowDate = new Date(Date.now());
 
@@ -46,7 +46,24 @@ async function insertHorary({ time, user }) {
   if (rowCount)
     throw errors.conflictError('This date and time has already been registered before.');
 
-  await doctorRepositories.insertHorary({ time, userId: user.id });
+  const {
+    rowCount: rowCountSpecialtyDoctor,
+    rows: [specialtyDoctor],
+  } = await doctorRepositories.getSpecialtyDoctorById({
+    specialtyDoctorId,
+  });
+
+  if (!rowCountSpecialtyDoctor)
+    throw errors.notFoundMessageError(
+      'Register this specialty first before registering a schedule.'
+    );
+
+  if (specialtyDoctor.user_id !== user.id)
+    throw errors.unauthorizedMessageError(
+      'Indicated specialty is not yours, check if you put it correctly.'
+    );
+
+  await doctorRepositories.insertHorary({ time, userId: user.id, specialtyDoctorId });
 }
 
 export default {

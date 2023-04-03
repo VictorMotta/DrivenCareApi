@@ -14,11 +14,11 @@ async function insertSpecialty(req, res, next) {
 }
 
 async function insertHorary(req, res, next) {
-  const { time } = req.body;
+  const { time, specialtyDoctorId } = req.body;
   const user = res.locals.user;
   try {
-    await doctorServices.insertHorary({ time, user });
-    res.sendStatus(201);
+    await doctorServices.insertHorary({ time, specialtyDoctorId, user });
+    return res.sendStatus(201);
   } catch (err) {
     next(err);
   }

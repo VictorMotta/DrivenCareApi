@@ -10,5 +10,10 @@ patientRouter.get(
   authenticationValidation,
   patientControllers.getAllDoctorSchedules
 );
+patientRouter.post(
+  '/horary/schedule/:timeId',
+  authenticationValidation,
+  patientControllers.scheduleNewHorary
+);
 
 export default patientRouter;

@@ -10,7 +10,7 @@ export default function handleApplicationErrors(err, req, res, next) {
     return res.status(httpStatus.CONFLICT).send({ message: err.message });
   }
 
-  if (err.name === 'NotFoundError') {
+  if (err.name === 'NotFoundError' || err.name === 'NotFoundMessageError') {
     return res.status(httpStatus.NOT_FOUND).send({ message: err.message });
   }
 

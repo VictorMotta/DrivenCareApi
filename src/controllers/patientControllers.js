@@ -5,7 +5,7 @@ async function getAllDoctors(req, res, next) {
 
   try {
     const doctors = await patientServices.getAllDoctors({ name, specialty, city, state });
-    res.send(doctors);
+    return res.send(doctors);
   } catch (err) {
     console.log(err);
     next(err);
@@ -20,9 +20,19 @@ async function getAllDoctorSchedules(req, res, next) {
       doctorId,
       user,
     });
-    res.send(doctorSchedule);
+    return res.send(doctorSchedule);
   } catch (err) {
-    console.log(err);
+    next(err);
+  }
+}
+
+async function scheduleNewHorary(req, res, next) {
+  const { timeId } = req.params;
+  const user = res.locals.user;
+  try {
+    await patientServices.scheduleNewHorary({ timeId, user });
+    return res.sendStatus(201);
+  } catch (err) {
     next(err);
   }
 }
@@ -30,4 +40,5 @@ async function getAllDoctorSchedules(req, res, next) {
 export default {
   getAllDoctors,
   getAllDoctorSchedules,
+  scheduleNewHorary,
 };

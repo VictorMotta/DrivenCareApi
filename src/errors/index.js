@@ -12,6 +12,13 @@ function notFoundError() {
   };
 }
 
+function notFoundMessageError(message) {
+  return {
+    name: 'NotFoundMessageError',
+    message,
+  };
+}
+
 function duplicatedEmailError() {
   return {
     name: 'DuplicatedEmailError',
@@ -78,6 +85,7 @@ function equalSpecialtiesError() {
 export default {
   conflictError,
   notFoundError,
+  notFoundMessageError,
   duplicatedEmailError,
   doctorWithoutCrm,
   duplicatedCpfError,

@@ -6,4 +6,5 @@ export const insertSpecialtySchema = joi.object({
 
 export const insertHorarySchema = joi.object({
   time: joi.date().required(),
+  specialtyDoctorId: joi.number().required(),
 });
