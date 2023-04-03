@@ -12,6 +12,18 @@ async function insertSpecialty(req, res, next) {
   }
 }
 
+async function insertHorary(req, res, next) {
+  const { time } = req.body;
+  const user = res.locals.user;
+  try {
+    await doctorServices.insertHorary({ time, user });
+    res.sendStatus(201);
+  } catch (err) {
+    next(err);
+  }
+}
+
 export default {
   insertSpecialty,
+  insertHorary,
 };

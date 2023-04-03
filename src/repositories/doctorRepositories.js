@@ -55,10 +55,39 @@ async function checkDoctorHasSpecialty({ userId, specialtyId }) {
   );
 }
 
+async function checkHoraryExist({ userId, time }) {
+  return await connectionDb.query(
+    `
+      SELECT * FROM 
+        available_times 
+      WHERE 
+        doctor_id = $1
+      AND 
+        time = $2;
+  `,
+    [userId, time]
+  );
+}
+
+async function insertHorary({ time, userId }) {
+  return await connectionDb.query(
+    `
+  INSERT INTO 
+    available_times 
+    (time, doctor_id) 
+  VALUES 
+    ($1, $2)
+  `,
+    [time, userId]
+  );
+}
+
 export default {
   findSpecialtyByName,
   insertNewSpecialty,
   checkAmountSpecialtyDoctor,
   insertSpecialtyFromDoctor,
   checkDoctorHasSpecialty,
+  checkHoraryExist,
+  insertHorary,
 };

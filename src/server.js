@@ -4,6 +4,7 @@ import cors from 'cors';
 import routes from './routes/index.js';
 import 'dotenv/config';
 import handleApplicationErrors from './middlewares/errorMiddleware.js';
+import dayjs from 'dayjs';
 
 const app = express();
 

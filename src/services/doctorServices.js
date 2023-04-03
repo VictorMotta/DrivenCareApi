@@ -29,6 +29,20 @@ async function insertSpecialty(specialty, user) {
   await doctorRepositories.insertSpecialtyFromDoctor({ userId: user.id, specialtyId });
 }
 
+async function insertHorary({ time, user }) {
+  const dateTime = new Date(time);
+  const nowDate = new Date(Date.now());
+
+  if (nowDate.getTime() > dateTime.getTime()) throw errors.conflictError('Invalid date and time.');
+
+  const { rowCount } = await doctorRepositories.checkHoraryExist({ userId: user.id, time });
+  if (rowCount)
+    throw errors.conflictError('This date and time has already been registered before.');
+
+  await doctorRepositories.insertHorary({ time, userId: user.id });
+}
+
 export default {
   insertSpecialty,
+  insertHorary,
 };
