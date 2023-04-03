@@ -77,9 +77,29 @@ async function getAllDoctorSchedules({ doctorId }) {
   );
 }
 
+async function scheduleNewHorary({ userId, timeId }) {
+  await connectionDb.query(
+    `
+    INSERT INTO 
+    scheduling 
+    (patient_id, available_times_id)
+    VALUES
+    ($1,$2)
+  `,
+    [userId, timeId]
+  );
+  return await connectionDb.query(
+    `
+    UPDATE available_times SET available = 'false' WHERE id = $1;
+  `,
+    [timeId]
+  );
+}
+
 export default {
   getAllDoctors,
   getDoctorById,
   getAllDoctorSchedules,
   getHoraryById,
+  scheduleNewHorary,
 };

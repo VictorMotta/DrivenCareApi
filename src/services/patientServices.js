@@ -43,10 +43,18 @@ async function scheduleNewHorary({ timeId, user }) {
   });
   if (!rowCountVerifyHoraryExist) throw errors.notFoundError();
 
+  if (user.is_doctor === true)
+    throw errors.unauthorizedMessageError(
+      'Only patients can schedule an appointment, create an account as a patient and log in.'
+    );
+
   if (timeDoctor.doctor_id === user.id)
     throw errors.conflictError('You cannot schedule an appointment with yourself.');
 
-  await patientRepositories.scheduleNewHorary({ timeId, userId: user.id });
+  if (!timeDoctor.available)
+    throw errors.unauthorizedMessageError('You cannot make an appointment at an unavailable time.');
+
+  await patientRepositories.scheduleNewHorary({ userId: user.id, timeId });
 }
 
 export default {
