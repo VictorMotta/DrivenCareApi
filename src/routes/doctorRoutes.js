@@ -7,8 +7,6 @@ import doctorMiddlewares from '../middlewares/doctorMiddlewares.js';
 
 const doctorRouter = Router();
 
-doctorRouter.get('/', authenticationValidation, doctorControllers.getAllDoctors);
-
 doctorRouter.post(
   '/specialty',
   validateSchema(insertSpecialtySchema),

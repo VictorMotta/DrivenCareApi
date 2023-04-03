@@ -37,6 +37,9 @@ async function insertHorary({ time, user }) {
   const dateTime = new Date(time);
   const nowDate = new Date(Date.now());
 
+  if (!user.is_doctor)
+    throw errors.unauthorizedMessageError('Only doctors can register schedules.');
+
   if (nowDate.getTime() > dateTime.getTime()) throw errors.conflictError('Invalid date and time.');
 
   const { rowCount } = await doctorRepositories.checkHoraryExist({ userId: user.id, time });

@@ -5,6 +5,13 @@ function conflictError(message) {
   };
 }
 
+function notFoundError() {
+  return {
+    name: 'NotFoundError',
+    message: 'Not Found',
+  };
+}
+
 function duplicatedEmailError() {
   return {
     name: 'DuplicatedEmailError',
@@ -47,6 +54,13 @@ function unauthorizedError() {
   };
 }
 
+function unauthorizedMessageError(message) {
+  return {
+    name: 'UnauthorizedMessageError',
+    message,
+  };
+}
+
 function doctorExceededSpecialtyLimitError() {
   return {
     name: 'DoctorExceededSpecialtyLimitError',
@@ -63,12 +77,14 @@ function equalSpecialtiesError() {
 
 export default {
   conflictError,
+  notFoundError,
   duplicatedEmailError,
   doctorWithoutCrm,
   duplicatedCpfError,
   duplicatedCrmError,
   invalidCredentialsError,
   unauthorizedError,
+  unauthorizedMessageError,
   doctorExceededSpecialtyLimitError,
   equalSpecialtiesError,
 };

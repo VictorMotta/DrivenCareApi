@@ -1,7 +1,5 @@
 import doctorServices from '../services/doctorServices.js';
 
-async function getAllDoctors(req, res, next) {}
-
 async function insertSpecialty(req, res, next) {
   const { specialty } = req.body;
   const user = res.locals.user;
@@ -27,7 +25,6 @@ async function insertHorary(req, res, next) {
 }
 
 export default {
-  getAllDoctors,
   insertSpecialty,
   insertHorary,
 };
