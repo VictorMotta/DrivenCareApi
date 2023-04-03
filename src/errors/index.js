@@ -33,10 +33,18 @@ function doctorWithoutCrm() {
   };
 }
 
+function invalidCredentialsError() {
+  return {
+    name: 'InvalidCredentialsError',
+    message: 'Email or password are incorrect',
+  };
+}
+
 export default {
   conflictError,
   duplicatedEmailError,
   doctorWithoutCrm,
   duplicatedCpfError,
   duplicatedCrmError,
+  invalidCredentialsError,
 };

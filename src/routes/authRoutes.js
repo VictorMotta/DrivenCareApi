@@ -5,6 +5,7 @@ import { signUpUserSchema } from '../schemas/authSchemas.js';
 
 const authRoutes = Router();
 
-authRoutes.post('/', validateSchema(signUpUserSchema), authControllers.signUp);
+authRoutes.post('/signup', validateSchema(signUpUserSchema), authControllers.signUp);
+authRoutes.post('/signin', authControllers.signIn);
 
 export default authRoutes;
