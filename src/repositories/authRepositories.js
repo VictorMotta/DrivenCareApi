@@ -39,9 +39,22 @@ async function signUp({ name, email, password, telephone, is_doctor, cpf, crm })
   );
 }
 
+async function findById(id) {
+  return await connectionDb.query(
+    `
+    SELECT 
+    id,name, email, cpf, telephone, crm, is_doctor
+    FROM users 
+    WHERE id = $1;
+  `,
+    [id]
+  );
+}
+
 export default {
   signUp,
   findByEmail,
   findByCpf,
   findByCrm,
+  findById,
 };

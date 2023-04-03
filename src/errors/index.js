@@ -40,6 +40,27 @@ function invalidCredentialsError() {
   };
 }
 
+function unauthorizedError() {
+  return {
+    name: 'UnauthorizedError',
+    message: 'You must be signed in to continue',
+  };
+}
+
+function doctorExceededSpecialtyLimitError() {
+  return {
+    name: 'DoctorExceededSpecialtyLimitError',
+    message: 'According to Decree Law 4.113/42, a doctor cannot have more than two specialties.',
+  };
+}
+
+function equalSpecialtiesError() {
+  return {
+    name: 'EqualSpecialtiesError',
+    message: 'You cannot put two equal specialties.',
+  };
+}
+
 export default {
   conflictError,
   duplicatedEmailError,
@@ -47,4 +68,7 @@ export default {
   duplicatedCpfError,
   duplicatedCrmError,
   invalidCredentialsError,
+  unauthorizedError,
+  doctorExceededSpecialtyLimitError,
+  equalSpecialtiesError,
 };

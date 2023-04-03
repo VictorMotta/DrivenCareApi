@@ -14,7 +14,12 @@ export default function handleApplicationErrors(err, req, res, next) {
     return res.status(httpStatus.UNPROCESSABLE_ENTITY).send({ message: err.message });
   }
 
-  if (err.name === 'InvalidCredentialsError') {
+  if (
+    err.name === 'UnauthorizedError' ||
+    err.name === 'InvalidCredentialsError' ||
+    err.name === 'DoctorExceededSpecialtyLimitError' ||
+    err.name === 'EqualSpecialtiesError'
+  ) {
     return res.status(httpStatus.UNAUTHORIZED).send({ message: err.message });
   }
 
