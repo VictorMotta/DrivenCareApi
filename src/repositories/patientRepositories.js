@@ -62,18 +62,47 @@ async function getHoraryById({ timeId }) {
 async function getAllDoctorSchedules({ doctorId }) {
   return await connectionDb.query(
     `
-    SELECT "at".id AS "timeId", u.name AS "doctorName", "at".time, "at".available,  s.name AS "nameSpecialty"
+    SELECT "at".id AS "timeId", 
+    u.name AS "doctorName", 
+    "at".time, 
+    "at".available,  
+    s.name AS "nameSpecialty"
     FROM available_times "at"
     LEFT JOIN users u
       ON "at".doctor_id = u.id
+	  LEFT JOIN doctors_specialty ds
+	    ON ds.id = "at".specialty_id
     LEFT JOIN specialties s
-      ON s.id = "at".specialty_id
+      ON s.id = ds.specialty_id
     WHERE "at".doctor_id = $1 
       AND "at".available = true
       AND "at".time > NOW()
     ORDER BY "at".time ASC;
   `,
     [doctorId]
+  );
+}
+
+async function getAllSchedulesPatient({ patientId }) {
+  return await connectionDb.query(
+    `
+    SELECT 
+      sch.id AS "schedulingId",
+      "at".time AS "schedulingTime",
+      u.name AS "doctorName",
+      s.name AS "specialtyName"
+    FROM scheduling sch
+    LEFT JOIN available_times "at"
+     ON "at".id = sch.available_times_id
+    LEFT JOIN users u
+      ON u.id = "at".doctor_id
+    LEFT JOIN doctors_specialty ds
+      ON ds.id = "at".specialty_id
+    LEFT JOIN specialties s
+      ON s.id = ds.specialty_id
+    WHERE sch.patient_id = $1;  
+  `,
+    [patientId]
   );
 }
 
@@ -101,5 +130,6 @@ export default {
   getDoctorById,
   getAllDoctorSchedules,
   getHoraryById,
+  getAllSchedulesPatient,
   scheduleNewHorary,
 };

@@ -34,6 +34,20 @@ async function getAllDoctorSchedules({ doctorId, user }) {
   return schedules;
 }
 
+async function getAllSchedulesPatient({ user }) {
+  if (user.is_doctor) throw errors.notFoundMessageError('Only patients have appointments.');
+
+  const { rowCount: rowCountSchedules, rows: schedules } =
+    await patientRepositories.getAllSchedulesPatient({
+      patientId: user.id,
+    });
+
+  if (!rowCountSchedules)
+    throw errors.notFoundMessageError('Make an appointment with a doctor to show up here!');
+
+  return schedules;
+}
+
 async function scheduleNewHorary({ timeId, user }) {
   const {
     rowCount: rowCountVerifyHoraryExist,
@@ -60,5 +74,6 @@ async function scheduleNewHorary({ timeId, user }) {
 export default {
   getAllDoctors,
   getAllDoctorSchedules,
+  getAllSchedulesPatient,
   scheduleNewHorary,
 };
