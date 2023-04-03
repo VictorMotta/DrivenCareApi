@@ -1,5 +1,28 @@
 import connectionDb from '../config/database.js';
 
+async function getAllSchedulesDoctor({ doctorId }) {
+  return await connectionDb.query(
+    `
+    SELECT 
+      sch.id AS "schedulingId",
+      atm.time AS "schedulingTime",
+      u.name AS "patientName",
+      s.name AS "specialtyName"
+    FROM scheduling sch
+    JOIN users u
+      ON u.id = sch.patient_id
+    JOIN available_times atm
+      ON atm.id = sch.available_times_id
+    JOIN doctors_specialty ds
+      ON ds.id = atm.specialty_id
+    JOIN specialties s
+      ON s.id = ds.specialty_id
+    WHERE atm.doctor_id = $1;
+  `,
+    [doctorId]
+  );
+}
+
 async function findSpecialtyByName(specialty) {
   return await connectionDb.query(
     `
@@ -92,6 +115,7 @@ async function getSpecialtyDoctorById({ specialtyDoctorId }) {
 }
 
 export default {
+  getAllSchedulesDoctor,
   findSpecialtyByName,
   insertNewSpecialty,
   checkAmountSpecialtyDoctor,

@@ -1,6 +1,17 @@
 import errors from '../errors/index.js';
 import doctorRepositories from '../repositories/doctorRepositories.js';
 
+async function getAllSchedulesDoctor({ user }) {
+  if (!user.is_doctor)
+    throw errors.unauthorizedMessageError('Only doctors can see scheduled appointments.');
+
+  const { rowCount: rowCountSchedulesDoctor, rows: schedulesDoctor } =
+    await doctorRepositories.getAllSchedulesDoctor({ doctorId: user.id });
+  if (!rowCountSchedulesDoctor) throw errors.notFoundMessageError('No consultation available.');
+
+  return schedulesDoctor;
+}
+
 async function insertSpecialty(specialty, user) {
   let specialtyId;
 
@@ -67,6 +78,7 @@ async function insertHorary({ time, specialtyDoctorId, user }) {
 }
 
 export default {
+  getAllSchedulesDoctor,
   insertSpecialty,
   insertHorary,
 };
